@@ -1,0 +1,225 @@
+# output from Metasim 
+# number of stages per habitat: 6
+# number of habitats: 4
+# current sizes of the habitats (in order): 
+# 998   70   596   124   
+# Number of generations elapsed (current gen): 100
+# Begin dataset 
+[Profile] 
+Title = ".  Generation 100"
+NbSamples = 4
+DataType = STANDARD 
+GenotypicData=1 
+LocusSeparator = WHITESPACE
+GameticPhase=0 
+RecessiveData=0 
+[Data]
+[[Samples]]
+Samplename = "Pop_0"
+SampleSize = 24
+SampleData = {
+Ind_0_Cl_0 1 	0 	0 	
+        	1 	2 	
+Ind_1_Cl_1 1 	1 	1 	
+        	1 	2 	
+Ind_2_Cl_0 1 	0 	0 	
+        	1 	0 	
+Ind_3_Cl_0 1 	1 	0 	
+        	1 	1 	
+Ind_4_Cl_1 1 	1 	1 	
+        	1 	1 	
+Ind_5_Cl_0 1 	1 	1 	
+        	1 	1 	
+Ind_6_Cl_0 1 	2 	0 	
+        	2 	1 	
+Ind_7_Cl_0 1 	1 	0 	
+        	2 	1 	
+Ind_8_Cl_0 1 	1 	1 	
+        	1 	1 	
+Ind_9_Cl_0 1 	1 	1 	
+        	1 	1 	
+Ind_10_Cl_0 1 	0 	0 	
+        	1 	0 	
+Ind_11_Cl_0 1 	1 	1 	
+        	1 	1 	
+Ind_12_Cl_1 1 	0 	0 	
+        	1 	0 	
+Ind_13_Cl_0 1 	1 	1 	
+        	1 	1 	
+Ind_14_Cl_0 1 	1 	1 	
+        	1 	2 	
+Ind_15_Cl_2 1 	1 	1 	
+        	2 	2 	
+Ind_16_Cl_1 1 	1 	1 	
+        	1 	1 	
+Ind_17_Cl_1 1 	1 	1 	
+        	1 	1 	
+Ind_18_Cl_0 1 	1 	0 	
+        	1 	1 	
+Ind_19_Cl_0 1 	1 	0 	
+        	1 	0 	
+Ind_20_Cl_0 1 	0 	0 	
+        	1 	0 	
+Ind_21_Cl_0 1 	1 	1 	
+        	1 	1 	
+Ind_22_Cl_0 1 	1 	1 	
+        	1 	1 	
+Ind_23_Cl_0 1 	1 	0 	
+        	2 	0 	
+}
+Samplename = "Pop_1"
+SampleSize = 24
+SampleData = {
+Ind_0_Cl_6 1 	1 	0 	
+        	1 	2 	
+Ind_1_Cl_6 1 	1 	0 	
+        	2 	0 	
+Ind_2_Cl_6 1 	1 	0 	
+        	1 	2 	
+Ind_3_Cl_6 1 	1 	0 	
+        	1 	0 	
+Ind_4_Cl_6 1 	1 	0 	
+        	2 	0 	
+Ind_5_Cl_7 1 	1 	0 	
+        	1 	1 	
+Ind_6_Cl_6 1 	1 	0 	
+        	1 	2 	
+Ind_7_Cl_7 1 	1 	1 	
+        	1 	1 	
+Ind_8_Cl_6 1 	1 	2 	
+        	2 	2 	
+Ind_9_Cl_6 1 	1 	0 	
+        	1 	0 	
+Ind_10_Cl_6 1 	1 	0 	
+        	1 	2 	
+Ind_11_Cl_6 1 	1 	0 	
+        	1 	0 	
+Ind_12_Cl_6 1 	0 	2 	
+        	1 	2 	
+Ind_13_Cl_6 1 	1 	2 	
+        	1 	2 	
+Ind_14_Cl_6 1 	1 	0 	
+        	2 	0 	
+Ind_15_Cl_6 1 	1 	0 	
+        	1 	0 	
+Ind_16_Cl_6 1 	1 	0 	
+        	1 	0 	
+Ind_17_Cl_7 1 	1 	2 	
+        	1 	2 	
+Ind_18_Cl_6 1 	1 	0 	
+        	1 	2 	
+Ind_19_Cl_6 1 	1 	2 	
+        	1 	2 	
+Ind_20_Cl_7 1 	1 	0 	
+        	1 	2 	
+Ind_21_Cl_7 1 	1 	2 	
+        	1 	2 	
+Ind_22_Cl_7 1 	0 	0 	
+        	1 	0 	
+Ind_23_Cl_7 1 	1 	0 	
+        	2 	2 	
+}
+Samplename = "Pop_2"
+SampleSize = 24
+SampleData = {
+Ind_0_Cl_12 1 	0 	1 	
+        	2 	1 	
+Ind_1_Cl_14 1 	0 	0 	
+        	1 	0 	
+Ind_2_Cl_12 1 	0 	0 	
+        	2 	1 	
+Ind_3_Cl_12 1 	2 	2 	
+        	2 	2 	
+Ind_4_Cl_12 1 	0 	0 	
+        	1 	0 	
+Ind_5_Cl_13 1 	0 	0 	
+        	2 	0 	
+Ind_6_Cl_13 1 	0 	0 	
+        	1 	0 	
+Ind_7_Cl_13 1 	1 	0 	
+        	1 	1 	
+Ind_8_Cl_13 1 	1 	1 	
+        	2 	1 	
+Ind_9_Cl_13 1 	2 	0 	
+        	2 	1 	
+Ind_10_Cl_13 1 	0 	0 	
+        	0 	0 	
+Ind_11_Cl_13 1 	1 	1 	
+        	2 	1 	
+Ind_12_Cl_12 1 	1 	0 	
+        	2 	1 	
+Ind_13_Cl_14 1 	0 	0 	
+        	2 	0 	
+Ind_14_Cl_13 1 	0 	0 	
+        	0 	2 	
+Ind_15_Cl_12 1 	0 	0 	
+        	1 	0 	
+Ind_16_Cl_13 1 	1 	0 	
+        	2 	1 	
+Ind_17_Cl_13 1 	0 	0 	
+        	0 	0 	
+Ind_18_Cl_14 1 	0 	0 	
+        	1 	0 	
+Ind_19_Cl_12 1 	0 	0 	
+        	1 	0 	
+Ind_20_Cl_12 1 	0 	0 	
+        	2 	1 	
+Ind_21_Cl_13 1 	0 	0 	
+        	1 	0 	
+Ind_22_Cl_12 1 	2 	0 	
+        	2 	1 	
+Ind_23_Cl_17 1 	0 	2 	
+        	2 	2 	
+}
+Samplename = "Pop_3"
+SampleSize = 24
+SampleData = {
+Ind_0_Cl_19 1 	0 	0 	
+        	2 	1 	
+Ind_1_Cl_19 1 	0 	0 	
+        	2 	1 	
+Ind_2_Cl_19 1 	1 	0 	
+        	1 	1 	
+Ind_3_Cl_20 1 	0 	0 	
+        	0 	1 	
+Ind_4_Cl_18 1 	1 	0 	
+        	1 	2 	
+Ind_5_Cl_18 1 	0 	1 	
+        	2 	1 	
+Ind_6_Cl_18 1 	1 	2 	
+        	2 	2 	
+Ind_7_Cl_18 1 	0 	0 	
+        	1 	0 	
+Ind_8_Cl_18 1 	0 	0 	
+        	2 	1 	
+Ind_9_Cl_18 1 	1 	0 	
+        	1 	1 	
+Ind_10_Cl_21 1 	1 	1 	
+        	2 	1 	
+Ind_11_Cl_18 1 	0 	0 	
+        	0 	0 	
+Ind_12_Cl_18 1 	1 	1 	
+        	2 	1 	
+Ind_13_Cl_19 1 	0 	1 	
+        	2 	1 	
+Ind_14_Cl_18 1 	1 	2 	
+        	2 	2 	
+Ind_15_Cl_18 1 	0 	0 	
+        	2 	0 	
+Ind_16_Cl_18 1 	1 	0 	
+        	2 	0 	
+Ind_17_Cl_18 1 	0 	0 	
+        	2 	1 	
+Ind_18_Cl_19 1 	1 	0 	
+        	1 	1 	
+Ind_19_Cl_19 1 	1 	1 	
+        	2 	1 	
+Ind_20_Cl_22 1 	2 	1 	
+        	2 	1 	
+Ind_21_Cl_19 1 	1 	1 	
+        	2 	1 	
+Ind_22_Cl_19 1 	0 	1 	
+        	2 	1 	
+Ind_23_Cl_19 1 	0 	0 	
+        	2 	0 	
+}
