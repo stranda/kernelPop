@@ -53,3 +53,8 @@
 /src/RandLib.cc.orig
 /src/TransMat.cc.orig
 /src/kernelPop.cc.orig
+/src/RandLib.o
+/src/SiteObj.o
+/src/TransMat.o
+/src/kernelPop.o
+/src/kernelPop2.so
