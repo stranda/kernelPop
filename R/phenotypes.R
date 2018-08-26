@@ -26,3 +26,13 @@ landscape.phenotypes <- function(rland)
       }
     rv
   }
+
+
+landscape.phenotypes.c <- function(rland)
+{
+
+    matrix(.Call("phenotypes",rland,PACKAGE = "kernelPop2"),
+           ncol=rland$intparam$nphen,byrow=T)
+
+}
+

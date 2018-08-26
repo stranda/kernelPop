@@ -99,3 +99,14 @@ landscape.new.locus <- function (rland, type = 0, ploidy = 1, mutationrate = 0, 
     }
     rland
 }
+
+
+
+#
+# a convenience function that provides the highest number of loci possible (value of MAXLOCI in 'const.h')column number for demographic information in
+# the individuals matrix
+#
+landscape.maxloci <- function()
+  {
+    as.integer(.Call("num_loci_poss",PACKAGE="kernelPop2"))
+  }

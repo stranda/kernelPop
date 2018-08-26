@@ -86,7 +86,7 @@ inline void ResetIndividuals()
 
   ///repeated execution of this function gets successive individuals
   ///from the data structure.  Returns an individual with class = -1 if
-  ///no more persent in the strucutre
+  ///no more present in the structure
 
 
 inline  PackedIndividual_space  GetCurrentIndividual()

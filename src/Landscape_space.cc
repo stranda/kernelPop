@@ -172,12 +172,22 @@ void Landscape_space::setepochs(int ep)
 
 void Landscape_space::setexpression()
 {
-  expmat.resize(getloci());
+  addstates.resize(getloci());
+
   hsq.resize(nphen);
+
+  expmat.resize(getloci());
   for(int i=0;i<getloci();i++)
     {
       expmat[i].resize(getnphen());
     }
+}
+
+void Landscape_space::setgpmap()
+{
+  gpdisp.resize(5);
+  gpdemo.resize(3);
+
 }
 
 void Landscape_space::setndemo(int nd)
@@ -1225,34 +1235,90 @@ std::vector< double > Landscape_space::IndividualPhenotype(PackedIndividual_spac
   nl=expmat.size();
   std::vector< double > rvec;
   double ac;
-  int p,l, st;
+  int p,l, st, pl, al;
 
   rvec.resize(np);
 
+  //  cerr<<"New individuals phenotype"<<endl;
+  
   if (hsq.size()!=np) 
     {cerr<<"mismatched heritabilities and phenotype dimensions"<<endl;
       assert(0==1);}
   for (p=0;p<int(np);p++)
     {
+      //      cerr<<"phen: "<<p<<endl;
       ac=0.0;
       for (l=0;l<int(nl);l++)
 	{
+	  //	  cerr<<"locus: "<<l<<endl;
+	  pl=LocusGetPloidy(l);
 	  if (Atbls[l]->getClassType()==STEPALLELETBL)
 	    {
-	      LocusGetAlleleRef(l,ind.GetAllele(l,0),&ali);
-	      st=ali.GetState();
-	      if (LocusGetPloidy(l)>1)
+	      st=0;
+	      for (al=0;al<pl;al++)
 		{
-		  LocusGetAlleleRef(l,ind.GetAllele(l,1),&ali);
-		  st=st + ali.GetState();
+		  // cerr<<"allele: "<<al<<endl;
+		  LocusGetAlleleRef(l,ind.GetAllele(l,al),&ali);
+		  if (ali.GetState()==addstates[l])
+		    {
+		      st++;
+		      //  cerr << "alleleState: "<<ali.GetState()<<", addStates[l] "<<addstates[l]<< ", state "<<st<<endl;	      
+		    } else {
+		    //	    cerr << "nomatch alleleState: "<<ali.GetState()<<", addStates[l] "<<addstates[l]<< ", state "<<st<<endl;	      
+		  }
 		}
 	      ac = ac+(st * expmat[l][p]);
+	      //cerr << "ac "<<ac<<", expmat[l][p]: "<<expmat[l][p]<<endl;
 	    }
 	}
       rvec[p] = ac + RandLibObj.normal(0, (ac * (1-hsq[p])));
+      //cerr<<"current ac: "<<ac<<endl;
     }
   return rvec;
 }
+
+
+std::vector< double > Landscape_space::Phenotypes()
+{
+  size_t sz;
+  size_t cls = gethabs()*getstages();
+  size_t np =getnphen();
+  std::vector < double > retvec, tmpvec;
+  PackedIndividual_space ind;
+  size_t i;
+  int k,j,idx ;
+  sz=0;
+  for (k=0;k<cls;k++)
+    {
+      sz=I[k].size()+sz;
+    }
+  //  cerr<<"sz: "<<sz<<endl;
+  //  retvec.resize(sz);
+  for (k=0;k<cls;k++)
+    {
+      //  cerr<<"class k " <<k<<endl;
+      I[k].ResetIndividuals();
+
+      for (i=0;i<I[k].size();i++)
+	{
+	  idx=I[k].GetCurrentIndex();
+	  //  cerr << "get current index:  " << idx << endl;
+	  tmpvec=IndividualPhenotype(I[k].GetIndividual(idx));
+	  I[k].NextIndividual();
+	  for (j=0;j<np;j++)
+	    {
+	      //  cerr << "tmpvec:" << tmpvec[j] <<endl;
+	      retvec.push_back(tmpvec[j]); 
+	    }
+	  
+	}
+    }
+  return retvec;
+}
+
+
+
+
 
 PackedIndividual_space Landscape_space::FindMate(PackedIndividual_space pi)
 {
@@ -1497,6 +1563,7 @@ ability to produce pollen could be inserted.
 			    }
 			}
 		      //cerr<<"abou to generate offspring j " << j <<endl;;
+		      
 		      for (q=0;q<noff;q++)
 			{
 

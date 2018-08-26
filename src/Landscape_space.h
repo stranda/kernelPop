@@ -341,7 +341,15 @@ protected:
   std::vector<std::vector<double> > expmat;
   ///heritability vector for phenotypes.  Right now, it is constant through time
   std::vector<double>  hsq;
+  ///ainidices vector for phenotypes.  Right now, it is constant through time
+  std::vector<int>  addstates;
 
+  ///map of which phenotypes go with which dispersal traits
+  std::vector<int> gpdisp;
+  ///map of which phenotypes go with which demographic traits
+  std::vector<int> gpdemo;
+
+  
   /**
      Table of allele frequencies rows are alleles and cols are habitats
 
@@ -387,7 +395,8 @@ public:
          void setepochs(int ep=1);
          void setndemo(int nd=1);
          void sethabs(int h=1);
-         void setexpression(); 
+         void setexpression();
+         void setgpmap(); 
          void setstages(int stg=2);
   inline void setloci() {nloc=Atbls.size();}
          void setepochprob(int ce, double prob);
@@ -477,6 +486,15 @@ public:
 
   inline void setheritability(int p, double val){hsq[p]=val;}
   inline double getheritability(int p){return hsq[p];}
+
+  inline void setaddstate(int l, int index){addstates[l]=index;}
+  inline int getaddstate(int l){return addstates[l];}
+
+  inline std::vector <int> getgpdisp() {return gpdisp;}
+  inline std::vector <int> getgpdemo() {return gpdemo;}
+
+  inline void setgpdisp(int index, int val) {gpdisp[index]=val;}
+  inline void setgpdemo(int index, int val) {gpdemo[index]=val;}
 
   
 
@@ -586,19 +604,26 @@ void zerok();
   {
     ind.resetLoci(Atbls);
   }
+  
   inline int addIndividual(PackedIndividual_space ind, int t)
   {
     ind.Birth(t,Atbls);
     return (I[ind.GetClass()].AddIndividual(ind));
   }
-  
+  ///returns a vector of phenotypes (additive model filtered through exp matrix)
   std::vector< double > IndividualPhenotype(PackedIndividual_space ind);
+  /**
+     returns all of the individual phenotypes
+  */
+  std::vector< double > Phenotypes();
+
+
   ///choose an epoch using some selection criteron
-void ChooseEpoch();
+  void ChooseEpoch();
   ///randomly chooses an epoch, random epoch selection is in action
-void RandomlyChooseEpoch();
+  void RandomlyChooseEpoch();
   ///Initialize the Populations
-void popsizeset(std::vector<int> & ps);
+  void popsizeset(std::vector<int> & ps);
 
   /*
     functions that allow outside processes to interact with the allele lookup tbl

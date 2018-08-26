@@ -73,21 +73,30 @@ extern "C" {
   {
     int i,j,np,nl;
     double *hsq;
+    int *addstates;
+    int tmp;
 
     hsq = (double *) R_alloc(long(L.getnphen()), sizeof(double));
+    addstates = (int *) R_alloc(int(L.getloci()), sizeof(int));
 
-    L.setexpression();
+    L.setexpression();  //allocate memory for expression stuff
 
     np = L.getnphen();
-
-
     nl = L.getloci();
     hsq = REAL(coerceVector(getListElement(inlist,HERITABLENAME),REALSXP));
+    addstates = INTEGER(coerceVector(getListElement(inlist,ADDSTATESNAME),INTSXP));
     for (j=0;j<np;j++)
       {
 	L.setheritability(j,hsq[j]);
       }
-
+    for (i=0;i<nl;i++)
+      {
+	L.setaddstate(i,addstates[i]);
+	//	Rprintf("addstate: %i\n",addstates[i]);
+	tmp=L.getaddstate(i);
+	//	Rprintf("tmp: %i\n",tmp);
+      }
+  
     for (i=0;i<nl;i++)
       {
       for (j=0;j<np;j++)
@@ -95,6 +104,31 @@ extern "C" {
 	  L.setexpmatel(i,j,REAL(coerceVector(getListElement(inlist,EXPMATNAME), REALSXP))[i*np+j]);
 	}
       }
+  }
+
+  void R_to_metasim_gpmap(SEXP inlist, Landscape_space_statistics &L)
+  {
+    int i,j,np,nl;
+    double *hsq;
+    int *gpdisp, *gpdemo;
+    int tmp;
+
+    gpdisp = (int *) R_alloc(int(5), sizeof(int));
+    gpdemo = (int *) R_alloc(int(3), sizeof(int));
+
+    L.setgpmap();  //allocate memory for expression stuff
+
+    gpdisp = INTEGER(coerceVector(getListElement(inlist,GPDISPNAME),INTSXP));
+    gpdemo = INTEGER(coerceVector(getListElement(inlist,GPDEMONAME),INTSXP));
+    for (i=0;i<5;i++)
+      {
+	L.setgpdisp(i,gpdisp[i]);
+      }
+    for (i=0;i<3;i++)
+      {
+	L.setgpdemo(i,gpdemo[i]);
+      }
+  
   }
 
   void R_to_metasim_demography(SEXP inlist, Landscape_space_statistics &L)
@@ -385,6 +419,7 @@ void convert_R_to_metasim(SEXP Rland, Landscape_space_statistics &L)
     R_to_metasim_demography(getListElement(Rland,DEMOPARAMS),L);
     R_to_metasim_loci(getListElement(Rland,LOCIPARAMS),L);
     R_to_metasim_expression(getListElement(Rland,EXPRESSIONPARAMS),L);
+    R_to_metasim_gpmap(getListElement(Rland,GPMAPPARAMS),L);
     R_to_metasim_ind(getListElement(Rland,INDPARAMS),L);
 
 }
@@ -488,7 +523,7 @@ read in landscapes
     SET_STRING_ELT(Flistn, 10, mkChar(POLLENSHAPE2NAME)); 
     SET_STRING_ELT(Flistn, 11, mkChar(POLLENMIXNAME)); 
     SET_STRING_ELT(Flistn, 12, mkChar(MINDENSNAME)); 
-    SET_STRING_ELT(Flistn, 13, mkChar(SUBPOPSNAME)); 
+    //    SET_STRING_ELT(Flistn, 13, mkChar(SUBPOPSNAME)); 
 
 
     setAttrib(Flist, R_NamesSymbol, Flistn);
@@ -516,30 +551,83 @@ read in landscapes
   
   SEXP metasim_to_R_expression(Landscape_space_statistics &L)
   {
-    int i,j;
-    SEXP Elist = PROTECT(allocVector (VECSXP,2));
-    SEXP Elistn = PROTECT(allocVector (STRSXP,2));
+
+    //Rprintf("entered metasim_to_R_expression \n");
+ int i,j,np,nl;
+    double tmp;
+    SEXP Elist = PROTECT(allocVector (VECSXP,3));
+    SEXP Elistn = PROTECT(allocVector (STRSXP,3));
     
     SET_STRING_ELT(Elistn, 0, mkChar(EXPMATNAME)); 
-    SET_STRING_ELT(Elistn, 1, mkChar(HERITABLENAME)); 
-    
-    int np=L.getnphen();
-    int nl=L.getloci();
+    SET_STRING_ELT(Elistn, 1, mkChar(ADDSTATESNAME));
+    SET_STRING_ELT(Elistn, 2, mkChar(HERITABLENAME)); 
+
+    np=L.getnphen();
+    nl=L.getloci();
     SEXP expmat = PROTECT(allocMatrix(REALSXP, nl, np));
     SEXP hsq = PROTECT(allocVector(REALSXP, np));
-
+    SEXP addstates = PROTECT(allocVector(INTSXP, nl));
+    
+    //Rprintf("np: %g \n",np);
+    //Rprintf("nl: %g \n",nl);    
+    
     for (i=0;i<nl;i++)
       for (j=0;j<np;j++)
 	{
+	  tmp=L.getexpmatel(i,j);
+	  //	  Rprintf("expval: %g \n",tmp);
 	  REAL(coerceVector(expmat, REALSXP))[i*np+j] = L.getexpmatel(i,j);
 	}
+
+    
     for (j=0;j<np;j++)
       {
 	REAL(hsq)[j] = L.getheritability(j);
       }
+    
+    for (i=0;i<nl;i++)
+      {
+	INTEGER(addstates)[i] = L.getaddstate(i);
+      }
+    
     setAttrib(Elist, R_NamesSymbol, Elistn);
     SET_VECTOR_ELT(Elist, 0, expmat);
-    SET_VECTOR_ELT(Elist, 1, hsq);
+    SET_VECTOR_ELT(Elist, 1, addstates);    
+    SET_VECTOR_ELT(Elist, 2, hsq);
+
+    UNPROTECT(5);
+    return Elist;
+  }
+
+  SEXP metasim_to_R_gpmap(Landscape_space_statistics &L)
+  {
+
+    //Rprintf("entered metasim_to_R_gpmap \n");
+    int i,j,np,nl;
+    double tmp;
+    SEXP Elist = PROTECT(allocVector (VECSXP,2));
+    SEXP Elistn = PROTECT(allocVector (STRSXP,2));
+    
+    SET_STRING_ELT(Elistn, 0, mkChar(GPDISPNAME)); 
+    SET_STRING_ELT(Elistn, 1, mkChar(GPDEMONAME));
+
+    SEXP gpdisp = PROTECT(allocVector(INTSXP, 5));
+    SEXP gpdemo = PROTECT(allocVector(INTSXP, 3));
+    
+    std::vector<int> gpdispv = L.getgpdisp();
+    for (i=0;i<5;i++)
+      {
+	INTEGER(gpdisp)[i] = gpdispv[i];
+      }
+    std::vector<int> gpdemov = L.getgpdemo();
+    for (i=0;i<3;i++)
+      {
+	INTEGER(gpdemo)[i] = gpdemov[i];
+      }
+    
+    setAttrib(Elist, R_NamesSymbol, Elistn);
+    SET_VECTOR_ELT(Elist, 0, gpdisp);
+    SET_VECTOR_ELT(Elist, 1, gpdemo);    
 
     UNPROTECT(4);
     return Elist;
@@ -946,17 +1034,23 @@ SEXP convert_metasim_to_R(Landscape_space_statistics &L)
 {
     ///Set up the return vector 'RetList'
     ///The return list 
-    SEXP Retlist = PROTECT(allocVector (VECSXP,7));
+    SEXP Retlist = PROTECT(allocVector (VECSXP,8));
     SET_VECTOR_ELT(Retlist, 0, metasim_to_R_ints(L));
+
     SET_VECTOR_ELT(Retlist, 1, metasim_to_R_switches(L));
-    SET_VECTOR_ELT(Retlist, 2, metasim_to_R_float(L));
-    SET_VECTOR_ELT(Retlist, 3, metasim_to_R_demography(L));
-    SET_VECTOR_ELT(Retlist, 4, metasim_to_R_loci(L));
+ 
+ SET_VECTOR_ELT(Retlist, 2, metasim_to_R_float(L));
+
+ SET_VECTOR_ELT(Retlist, 3, metasim_to_R_demography(L));
+
+ SET_VECTOR_ELT(Retlist, 4, metasim_to_R_loci(L));
+
     SET_VECTOR_ELT(Retlist, 5, metasim_to_R_expression(L));
-    SET_VECTOR_ELT(Retlist, 6, metasim_to_R_ind(L));
+    SET_VECTOR_ELT(Retlist, 6, metasim_to_R_gpmap(L));
+    SET_VECTOR_ELT(Retlist, 7, metasim_to_R_ind(L));
 
     ///Names of elements in the return list
-    SEXP Retlistn = PROTECT(allocVector (STRSXP,7));
+    SEXP Retlistn = PROTECT(allocVector (STRSXP,8));
     
     SET_STRING_ELT(Retlistn, 0, mkChar(INTEGERPARAMS));
     SET_STRING_ELT(Retlistn, 1, mkChar(SWITCHPARAMS));
@@ -964,7 +1058,8 @@ SEXP convert_metasim_to_R(Landscape_space_statistics &L)
     SET_STRING_ELT(Retlistn, 3, mkChar(DEMOPARAMS));
     SET_STRING_ELT(Retlistn, 4, mkChar(LOCIPARAMS));
     SET_STRING_ELT(Retlistn, 5, mkChar(EXPRESSIONPARAMS));
-    SET_STRING_ELT(Retlistn, 6, mkChar(INDPARAMS));
+    SET_STRING_ELT(Retlistn, 6, mkChar(GPMAPPARAMS));
+    SET_STRING_ELT(Retlistn, 7, mkChar(INDPARAMS));
     setAttrib(Retlist, R_NamesSymbol, Retlistn);
 
     UNPROTECT(2);
@@ -1243,13 +1338,41 @@ SEXP populate_Rland(SEXP Rland, SEXP Population_sizes)
     //Rprintf("set everything up to expression \n");
 
     R_to_metasim_expression(getListElement(Rland,EXPRESSIONPARAMS),L);
+    R_to_metasim_gpmap(getListElement(Rland,GPMAPPARAMS),L);
     ps = sexp_int_to_vector(Population_sizes);
     //Rprintf("set everything up to popsizeset \n");
     L.popsizeset(ps);
-
+    //Rprintf("about to return but must run convert_metasim_to_R \n");
     return convert_metasim_to_R(L);
     return 0;
   }
+
+
+SEXP phenotypes(SEXP Rland)
+{
+  vector <double> inmat;
+  Landscape_space_statistics L;
+  int i, l, n;
+
+  convert_R_to_metasim(Rland,L);
+  inmat=L.Phenotypes();
+
+  l=inmat.size();
+  //  Rprintf("inmat.size(): %i",l);
+  SEXP retvec= PROTECT(allocVector(REALSXP,l));
+  
+  for (i=0; i<l; i++)
+    {
+      REAL(retvec)[i]=inmat[i];
+    }
+  UNPROTECT(1);
+  return retvec;
+}
+
+
+
+
+
 
 
 SEXP l2w(SEXP Rland, SEXP numind)
@@ -1272,10 +1395,15 @@ SEXP l2w(SEXP Rland, SEXP numind)
   return retvec;
 }
 
-  SEXP num_demo_cols()
-  {
-    return ScalarInteger(NONGENOTYPECOLS);
-  }
+SEXP num_demo_cols()
+{
+  return ScalarInteger(NONGENOTYPECOLS);
+}
+
+SEXP num_loci_poss()
+{
+  return ScalarInteger(MAXLOCI);
+}
 
 SEXP test()
   {
@@ -1290,146 +1418,6 @@ SEXP test()
     UNPROTECT(1);
     return Indmat;
   }
-
-/*
-Functions that produce text files for input into other programs. 
-*/
-
-SEXP writeGDA(SEXP fn, SEXP Rland, SEXP ni)
-{
-  Landscape_space_statistics L;
-  ofstream OSTRM;
-    OSTRM.open(CHARACTER_VALUE(fn));
-    if (!OSTRM)
-      {
-	cerr <<"fn "<<CHARACTER_VALUE(fn)<<endl;
-	error ("could not open output file name:");
-	return ScalarInteger(1);
-      }
-    convert_R_to_metasim(Rland,L);  
-    L.GdaOut(INTEGER(coerceVector(ni,INTSXP))[0], OSTRM);
-    OSTRM.close();
-    return ScalarInteger(0);
-} 
-
-SEXP writeArlequinHap(SEXP fn, SEXP Rland, SEXP ni)
-{
-  Landscape_space_statistics L;
-  ofstream OSTRM;
-  OSTRM.open(CHARACTER_VALUE(fn));
-  if (!OSTRM)
-    {
-      cerr <<"fn "<<CHARACTER_VALUE(fn)<<endl;
-      error ("could not open output file name:");
-      return ScalarInteger(1);
-    }
-  convert_R_to_metasim(Rland,L);  
-  L.ArlequinHaploidOut(INTEGER(coerceVector(ni,INTSXP))[0], OSTRM);
-  OSTRM.close();
-  return ScalarInteger(0);
-} 
-
-SEXP writeArlequinDip(SEXP fn, SEXP Rland, SEXP ni)
-{
-  Landscape_space_statistics L;
-    ofstream OSTRM;
-    OSTRM.open(CHARACTER_VALUE(fn));
-    if (!OSTRM)
-      {
-	cerr <<"fn "<<CHARACTER_VALUE(fn)<<endl;
-	error ("could not open output file name:");
-	return ScalarInteger(1);
-      }
-    convert_R_to_metasim(Rland,L);  
-    L.ArlequinDiploidOut(INTEGER(coerceVector(ni,INTSXP))[0], OSTRM);
-    OSTRM.close();
-    return ScalarInteger(0);
-} 
-
-SEXP writeBIOSYS(SEXP fn, SEXP Rland, SEXP ni)
-{
-  Landscape_space_statistics L;
-    ofstream OSTRM;
-    OSTRM.open(CHARACTER_VALUE(fn));
-    if (!OSTRM)
-      {
-	cerr <<"fn "<<CHARACTER_VALUE(fn)<<endl;
-	error ("could not open output file name:");
-	return ScalarInteger(1);
-      }
-    convert_R_to_metasim(Rland,L);  
-    L.BiosysDiploidOut(INTEGER(coerceVector(ni,INTSXP))[0], OSTRM);
-    OSTRM.close();
-    return ScalarInteger(0);
-} 
-
-SEXP writeGenPop(SEXP fn, SEXP Rland, SEXP ni)
-{
-  Landscape_space_statistics L;
-    ofstream OSTRM;
-    OSTRM.open(CHARACTER_VALUE(fn));
-    if (!OSTRM)
-      {
-	cerr <<"fn "<<CHARACTER_VALUE(fn)<<endl;
-	error ("could not open output file name:");
-	return ScalarInteger(1);
-      }
-    convert_R_to_metasim(Rland,L);  
-    L.GenepopOut(INTEGER(coerceVector(ni,INTSXP))[0], OSTRM);
-    OSTRM.close();
-    return ScalarInteger(0);
-} 
-
-SEXP writeReRat(SEXP fn, SEXP Rland, SEXP ni)
-{
-  Landscape_space_statistics L;
-    ofstream OSTRM;
-    OSTRM.open(CHARACTER_VALUE(fn));
-    if (!OSTRM)
-      {
-	cerr <<"fn "<<CHARACTER_VALUE(fn)<<endl;
-	error ("could not open output file name:");
-	return ScalarInteger(1);
-      }
-    convert_R_to_metasim(Rland,L);  
-    L.MicroRatOut(INTEGER(coerceVector(ni,INTSXP))[0], OSTRM);
-    OSTRM.close();
-    return ScalarInteger(0);
-} 
-
-SEXP writeMigrateDip(SEXP fn, SEXP Rland, SEXP ni)
-{
-  Landscape_space_statistics L;
-    ofstream OSTRM;
-    OSTRM.open(CHARACTER_VALUE(fn));
-    if (!OSTRM)
-      {
-	cerr <<"fn "<<CHARACTER_VALUE(fn)<<endl;
-	error ("could not open output file name:");
-	return ScalarInteger(1);
-      }
-    convert_R_to_metasim(Rland,L);  
-    L.MigrateDiploidOut(INTEGER(coerceVector(ni,INTSXP))[0], OSTRM);
-    OSTRM.close();
-    return ScalarInteger(0);
-} 
-
-SEXP writeR(SEXP fn, SEXP Rland, SEXP ni)
-{
-  Landscape_space_statistics L;
-    ofstream OSTRM;
-    OSTRM.open(CHARACTER_VALUE(fn));
-    if (!OSTRM)
-      {
-	cerr <<"fn "<<CHARACTER_VALUE(fn)<<endl;
-	error ("could not open output file name:");
-	return ScalarInteger(1);
-      }
-    convert_R_to_metasim(Rland,L);  
-    L.ROut(INTEGER(coerceVector(ni,INTSXP))[0], OSTRM);
-    OSTRM.close();
-    return ScalarInteger(0);
-} 
 
 
 } ///end of extern "C"

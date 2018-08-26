@@ -25,6 +25,7 @@ Defines:
 #define DEMOPARAMS       "demography"
 #define LOCIPARAMS       "loci"
 #define EXPRESSIONPARAMS "expression"
+#define GPMAPPARAMS      "gpmap"
 #define INDPARAMS        "individuals"
 
 #define HABNAMES         "habitats"     
@@ -101,7 +102,11 @@ Defines:
 #define BOTYNAME        "boty"
 
 #define EXPMATNAME      "expmat"
+#define ADDSTATESNAME      "addstates"
 #define HERITABLENAME   "hsq"
+
+#define GPDISPNAME   "gpdisp"
+#define GPDEMONAME   "gpdemo"
 
 #define SUBPOPSNAME     "subpopsize"
 
@@ -125,19 +130,13 @@ extern "C" SEXP populate_Rland(SEXP Rland, SEXP Population_sizes);
 ///convert a landscape into a format that the weir fst calculations in R can use.
 extern "C" SEXP l2w(SEXP Rland, SEXP numind);
 extern "C" SEXP num_demo_cols();
-extern "C" SEXP clean_landscape(SEXP Rland);
 
-///output functions
-///convert landscapes to various formats
-///All take a filename, a landscape, and a number of indiviudals to sample per habitat
-extern "C" SEXP writeGDA(SEXP fn, SEXP Rland, SEXP ni);
-extern "C" SEXP writeArlequinDip(SEXP fn, SEXP Rland, SEXP ni);
-extern "C" SEXP writeArlequinHap(SEXP fn, SEXP Rland, SEXP ni);
-extern "C" SEXP writeBIOSYS(SEXP fn, SEXP Rland, SEXP ni);
-extern "C" SEXP writeGenPop(SEXP fn, SEXP Rland, SEXP ni);
-extern "C" SEXP writeR(SEXP fn, SEXP Rland, SEXP ni);
-extern "C" SEXP writeMigrateDip(SEXP fn, SEXP Rland, SEXP ni);
-extern "C" SEXP writeReRat(SEXP fn, SEXP Rland, SEXP ni);
+///return the maximum loci compiled into this version of rmetasim
+extern "C" SEXP num_loci_poss();
+
+extern "C" SEXP clean_landscape(SEXP Rland);
 
 
 extern "C" SEXP test();
+
+extern "C" SEXP phenotypes(SEXP Rland);

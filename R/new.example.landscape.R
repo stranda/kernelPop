@@ -44,22 +44,19 @@ function()
                      topy=locs[,4],
                      maxland=c(min(locs[1]),min(locs[2]),max(locs[3]),max(locs[4])))
   
-  rland <- landscape.new.locus(rland,type=0,ploidy=1,mutationrate=0.005,numalleles=3,
-                     frequencies=c(.2,.2,.6),transmission=1)
 
-  rland <- landscape.new.locus(rland,type=1,ploidy=2,mutationrate=0.001,transmission=0,numalleles=5)
-  rland <- landscape.new.locus(rland,type=1,ploidy=2,mutationrate=0.001,transmission=0,numalleles=5)
-  rland <- landscape.new.locus(rland,type=1,ploidy=2,mutationrate=0.001,transmission=0,numalleles=5)
+  rland <- landscape.new.locus(rland,type=1,ploidy=2,mutationrate=0.00,transmission=0,numalleles=2)
+  rland <- landscape.new.locus(rland,type=1,ploidy=2,mutationrate=0.00,transmission=0,numalleles=2)
 
-  rland <- landscape.new.locus(rland,type=0,ploidy=2,mutationrate=0.001,transmission=0,numalleles=5)
-
-
-  expmat <- cbind(c(0,0.3,0.3,0.4,0,0,0),c(0,0.7,0.25,0.05,0,0,0))
-  hsq <- c(0.9,0.9)
+  expmat <- cbind(c(1,0),c(0,1))
+  hsq <- c(1,1)
   rland <- landscape.new.expression(rland,expmat=expmat,hsq=hsq)
-
+  rland <- landscape.new.gpmap(rland,rep(-1,5),rep(-1,3))
   initpopsize <- 150
-  rland <- landscape.new.individuals(rland,round(runif(2*rland$intparam$habitat,min=0,max=initpopsize/1.5)))
+  rland <- landscape.new.individuals(rland,
+                         round(runif(2*rland$intparam$habitat,
+                                     min=0,
+                                     max=initpopsize/1.5)))
   rland
 }
 
