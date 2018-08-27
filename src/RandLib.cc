@@ -211,7 +211,8 @@ void RandLib::rgeom_xy(double ix, double iy, double sc, double sh, double aspect
 
 }
 
-void RandLib::rmixed_xy(double ix, double iy, double mu1, double mu2, double sd2, double mix, double aspect, double &newx, double &newy)
+void RandLib::rmixed_xy(double ix, double iy, double mu1, double mu2, double sd2, double mix,
+			double aspect, double &newx, double &newy)
 {
   double dir = uniform()* 2 * M_PI;
   double dist ;
@@ -219,17 +220,31 @@ void RandLib::rmixed_xy(double ix, double iy, double mu1, double mu2, double sd2
   double dflag = 1.0;
   if (dir>M_PI) {dflag=-1.0;}
 
-  if (mt<mix)
+  /*
+ if (mt<mix)
     {
       dist = rexp(mu1);
-      newy = (sin(dir)*aspect*dist) + iy;
-      newx = pow(1-pow((sin(dir)*aspect),2),0.5)*dist*dflag + ix;
+      newy = (sin(dir)**dist) + iy;
+      newx = pow(1-pow((sin(dir)),2),0.5)*dist*dflag + ix;
     }
   else
     {
       dist = rnorm(mu2,sd2);
       newy = (sin(dir)*aspect*dist) + iy;
       newx = pow(1-pow((sin(dir)*aspect),2),0.5)*dist*dflag + ix;
+    }
+  */
+  if (mt>=mix) //mix is the prop of ldd
+    {
+      dist = rexp(mu1);
+      newy = (sin(dir)*dist) + iy;
+      newx = (cos(dir)*dist) + ix;
+    }
+  else
+    {
+      dist = rnorm(mu2,sd2);
+      newy = (sin(dir)*dist) + iy;
+      newx = (cos(dir)*dist) + ix;
     }
 }
 void RandLib::rassym_mixed_xy(double ix, double iy, 

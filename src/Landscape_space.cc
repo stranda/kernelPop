@@ -1425,6 +1425,7 @@ void Landscape_space::Reproduce()
   int q,noff ;
   int bsecls ;
   size_t j, i, k, l, sz, lsz ;
+  double dmult1, dmult2, dmult3, dmult4, dmult5;
   sz = nhab * s;
 
   
@@ -1563,7 +1564,12 @@ ability to produce pollen could be inserted.
 			    }
 			}
 		      //cerr<<"abou to generate offspring j " << j <<endl;;
-		      
+		      //can impose fitness cost/benefit on mother at this point:
+		      if (!(gpdemo[2]<0)) //gpdemo [2] is the reproduction parameterin the map
+			if (gpdemo[2]<nphen) { //make sure that there could be a phenotype 
+			  double rph = IndividualPhenotype(searchI)[gpdemo[2]]; //the phenotype for the repro trait
+			  noff = floor(noff*rph);
+			}
 		      for (q=0;q<noff;q++)
 			{
 
@@ -1577,27 +1583,24 @@ ability to produce pollen could be inserted.
 			    }
 			  else///selection on phenotype of the mother "searchI"
 			    {
-			      if (nphen==1)
-				{
-				  double mult1 = IndividualPhenotype(searchI)[0]/(SELECTIONMAXA*2) ;
-				  RandLibObj.rmixed_xy(searchI.GetX(),searchI.GetY(),
-						      seed_mu,seed_mu2*mult1,seed_shape2,
-						      seed_mix,asp,
-						      tmpx,tmpy);
-				}
-			      else if (nphen==2)
-				{
-				  double mult1 = 1+(0.5 - IndividualPhenotype(searchI)[0]/(SELECTIONMAXA*2)) ;
-				  if (mult1<0) {mult1=0;}
-				  double mult2  = 1+(0.5-IndividualPhenotype(searchI)[1]/(SELECTIONMAXA*2)) * seed_mix;
-				  if (mult2<0) {mult2=0;}
-				  double nmix = mult2*seed_mix;
-				  if (nmix>1){nmix=1;}
-				  RandLibObj.rmixed_xy(searchI.GetX(),searchI.GetY(),
-						      seed_mu,seed_mu2*mult1,seed_shape2,nmix,asp,
-						      tmpx,tmpy);
-				  //cerr<<"determined phenotype mult "<<mult1<<" mult2 "<<mult2<<endl;
-				}
+			      if (!(gpdisp[0]<0)) dmult1=IndividualPhenotype(searchI)[gpdisp[0]]; else dmult1=1; //shortscale
+			      if (!(gpdisp[1]<0)) dmult2=IndividualPhenotype(searchI)[gpdisp[1]]; else dmult2=1; //longscale
+			      if (!(gpdisp[2]<0)) dmult3=IndividualPhenotype(searchI)[gpdisp[2]]; else dmult3=1; //longshape
+			      if (!(gpdisp[3]<0)) dmult4=IndividualPhenotype(searchI)[gpdisp[3]]; else dmult4=1; //mix
+			      if (!(gpdisp[4]<0)) dmult5=1; else dmult5=1;
+
+			      double nmix = dmult4*seed_mix;
+			      if (nmix>1){nmix=1;}
+			      
+			      RandLibObj.rmixed_xy(searchI.GetX(),searchI.GetY(),
+						   seed_mu*dmult1,
+						   seed_mu2*dmult2,
+						   seed_shape2*dmult3,
+						   nmix,
+						   asp,
+						   tmpx,tmpy);
+			      //cerr<<"determined phenotype mult "<<mult1<<" mult2 "<<mult2<<endl;
+
 			    }
 			  ///This is the place where suitable habitat is determined.  
 			  ///
