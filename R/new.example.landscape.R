@@ -51,7 +51,7 @@ function()
   expmat <- cbind(c(1,0),c(0,1))
   hsq <- c(1,1)
   rland <- landscape.new.expression(rland,expmat=expmat,hsq=hsq)
-  rland <- landscape.new.gpmap(rland,rep(-1,5),rep(-1,3))
+  rland <- landscape.new.gpmap(rland)
   initpopsize <- 150
   rland <- landscape.new.individuals(rland,
                          round(runif(2*rland$intparam$habitat,

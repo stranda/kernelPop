@@ -12,6 +12,7 @@ function(rland,expmat,addstates=NULL,hsq=NULL)
     if (is.null(addstates)) addstates <- rep(1,
                                            length=dim(expmat)[1])
     
+    if (dim(expmat)[1]!=length(rland$loci)) {stop("expression mat should have nloc rows and nphen columns")}
     rland$expression <- list(expmat=expmat,addstates=addstates,hsq=hsq)
     ##set the nphen in intparam
     rland$intparam$nphen <- dim(expmat)[2]
@@ -25,17 +26,18 @@ landscape.new.gpmap <- function(rland,gpdisp=NULL,gpdemo=NULL)
 {
     if ((rland$intparam$nphen<1)||(is.null(rland$expression)))
     {
-        rland$gpmap= list(gpdisp=rep(-1,5),gpdemo=rep(-1,3))
+        rland$gpmap= list(gpdisp=cbind(rep(-1,5),rep(0,5),rep(1,5)),
+                          gpdemo=cbind(rep(-1,3),rep(0,3),rep(1,3)))
     } else {
 
-        if (is.null(gpdisp))
+        if ((is.null(gpdisp))||(!is.matrix(gpdisp)))
         {
-            gpdisp=rep(-1,5)
+            gpdisp=cbind(rep(-1,5),rep(0,5),rep(1,5))
         }
 
-        if (is.null(gpdemo))
+        if ((is.null(gpdemo))||(!is.matrix(gpdemo)))
         {
-            gpdemo=rep(-1,3)
+            gpdemo=gpdemo=cbind(rep(-1,3),rep(0,3),rep(1,3))
         }
         
         rland$gpmap <- list(gpdisp=gpdisp,gpdemo=gpdemo)

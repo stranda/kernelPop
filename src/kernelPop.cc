@@ -96,39 +96,39 @@ extern "C" {
 	tmp=L.getaddstate(i);
 	//	Rprintf("tmp: %i\n",tmp);
       }
-  
+    std::vector< std::vector< double > > em;
+    em.resize(nl);
     for (i=0;i<nl;i++)
       {
-      for (j=0;j<np;j++)
-	{
-	  L.setexpmatel(i,j,REAL(coerceVector(getListElement(inlist,EXPMATNAME), REALSXP))[i*np+j]);
+	em[i].resize(np);
+	for (j=0;j<np;j++)
+	  {
+	    em[i][j] = REAL(coerceVector(getListElement(inlist,EXPMATNAME), REALSXP))[i+nl*j];
+	    //	    Rprintf("i=%i, j=%i, coerceVector expmat %f \n",i,j,em[i][j]);
+	    //	  L.setexpmatel(i,j,REAL(coerceVector(getListElement(inlist,EXPMATNAME), REALSXP))[j*np+i]);
+	    L.setexpmatel(i,j,em[i][j]);
 	}
       }
   }
 
   void R_to_metasim_gpmap(SEXP inlist, Landscape_space_statistics &L)
   {
-    int i,j,np,nl;
-    double *hsq;
-    int *gpdisp, *gpdemo;
-    int tmp;
+    int i,j;
 
-    gpdisp = (int *) R_alloc(int(5), sizeof(int));
-    gpdemo = (int *) R_alloc(int(3), sizeof(int));
+    L.setgpmap();
 
-    L.setgpmap();  //allocate memory for expression stuff
-
-    gpdisp = INTEGER(coerceVector(getListElement(inlist,GPDISPNAME),INTSXP));
-    gpdemo = INTEGER(coerceVector(getListElement(inlist,GPDEMONAME),INTSXP));
     for (i=0;i<5;i++)
-      {
-	L.setgpdisp(i,gpdisp[i]);
-      }
+      for (j=0;j<3;j++)
+	{
+	  L.setgpdisp(i,j,REAL(coerceVector(getListElement(inlist,GPDISPNAME), REALSXP))[i+j*5]);
+	  //	  Rprintf("L.getgpdisp, i=%i, j=%i, val=%g\n",i,j,L.getgpdisp(i,j));
+	}
     for (i=0;i<3;i++)
-      {
-	L.setgpdemo(i,gpdemo[i]);
-      }
-  
+      for (j=0;j<3;j++)
+	{
+	  L.setgpdemo(i,j,REAL(coerceVector(getListElement(inlist,GPDEMONAME), REALSXP))[i+j*3]);
+	  //	  Rprintf("L.getgpdemo, i=%i, j=%i, val=%g\n",i,j,L.getgpdemo(i,j));
+	}
   }
 
   void R_to_metasim_demography(SEXP inlist, Landscape_space_statistics &L)
@@ -568,15 +568,15 @@ read in landscapes
     SEXP hsq = PROTECT(allocVector(REALSXP, np));
     SEXP addstates = PROTECT(allocVector(INTSXP, nl));
     
-    //Rprintf("np: %g \n",np);
-    //Rprintf("nl: %g \n",nl);    
+    //Rprintf("np: %i \n",np);
+    //Rprintf("nl: %i \n",nl);    
     
     for (i=0;i<nl;i++)
       for (j=0;j<np;j++)
 	{
 	  tmp=L.getexpmatel(i,j);
 	  //	  Rprintf("expval: %g \n",tmp);
-	  REAL(coerceVector(expmat, REALSXP))[i*np+j] = L.getexpmatel(i,j);
+	  REAL(coerceVector(expmat, REALSXP))[j*nl+i] = L.getexpmatel(i,j);
 	}
 
     
@@ -603,27 +603,24 @@ read in landscapes
   {
 
     //Rprintf("entered metasim_to_R_gpmap \n");
-    int i,j,np,nl;
-    double tmp;
+    int i, j;
+
     SEXP Elist = PROTECT(allocVector (VECSXP,2));
     SEXP Elistn = PROTECT(allocVector (STRSXP,2));
     
     SET_STRING_ELT(Elistn, 0, mkChar(GPDISPNAME)); 
     SET_STRING_ELT(Elistn, 1, mkChar(GPDEMONAME));
 
-    SEXP gpdisp = PROTECT(allocVector(INTSXP, 5));
-    SEXP gpdemo = PROTECT(allocVector(INTSXP, 3));
+    SEXP gpdisp = PROTECT(allocMatrix(REALSXP, 5, 3));
+    SEXP gpdemo = PROTECT(allocMatrix(REALSXP, 3, 3));
     
-    std::vector<int> gpdispv = L.getgpdisp();
+
     for (i=0;i<5;i++)
-      {
-	INTEGER(gpdisp)[i] = gpdispv[i];
-      }
-    std::vector<int> gpdemov = L.getgpdemo();
+      for (j=0;j<3;j++)
+	REAL(gpdisp)[i+j*5] = L.getgpdisp(i,j);
     for (i=0;i<3;i++)
-      {
-	INTEGER(gpdemo)[i] = gpdemov[i];
-      }
+      for (j=0;j<3;j++)
+	REAL(gpdemo)[i+j*3] = L.getgpdemo(i,j);
     
     setAttrib(Elist, R_NamesSymbol, Elistn);
     SET_VECTOR_ELT(Elist, 0, gpdisp);

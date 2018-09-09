@@ -345,9 +345,9 @@ protected:
   std::vector<int>  addstates;
 
   ///map of which phenotypes go with which dispersal traits
-  std::vector<int> gpdisp;
+  std::vector<std::vector <double> > gpdisp;
   ///map of which phenotypes go with which demographic traits
-  std::vector<int> gpdemo;
+  std::vector<std::vector <double> > gpdemo;
 
   
   /**
@@ -490,11 +490,11 @@ public:
   inline void setaddstate(int l, int index){addstates[l]=index;}
   inline int getaddstate(int l){return addstates[l];}
 
-  inline std::vector <int> getgpdisp() {return gpdisp;}
-  inline std::vector <int> getgpdemo() {return gpdemo;}
+  inline double getgpdisp(int index, int coef) {return gpdisp[index][coef];}
+  inline double getgpdemo(int index, int coef) {return gpdemo[index][coef];}
 
-  inline void setgpdisp(int index, int val) {gpdisp[index]=val;}
-  inline void setgpdemo(int index, int val) {gpdemo[index]=val;}
+  inline void setgpdisp(int index, int coef, double val) {gpdisp[index][coef]=val;}
+  inline void setgpdemo(int index, int coef, double val) {gpdemo[index][coef]=val;}
 
   
 

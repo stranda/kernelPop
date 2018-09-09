@@ -31,6 +31,8 @@ landscape.phenotypes <- function(rland)
 landscape.phenotypes.c <- function(rland)
 {
 
+    rland$individuals=as.matrix(rland$individuals)
+    
     matrix(.Call("phenotypes",rland,PACKAGE = "kernelPop2"),
            ncol=rland$intparam$nphen,byrow=T)
 

@@ -102,7 +102,7 @@ Defines:
 #define BOTYNAME        "boty"
 
 #define EXPMATNAME      "expmat"
-#define ADDSTATESNAME      "addstates"
+#define ADDSTATESNAME   "addstates"
 #define HERITABLENAME   "hsq"
 
 #define GPDISPNAME   "gpdisp"

@@ -1,6 +1,6 @@
+
+
 library(kernelPop2)
-
-
 
 rland <- NULL
   rland <- landscape.new.empty()
@@ -52,10 +52,18 @@ locs <- as.matrix(data.frame(lft=c(0,501,rights[c(-1:-2)]-diff(rights[-1])+1),
   rland <- landscape.new.locus(rland,type=1,ploidy=2,mutationrate=0.00,transmission=0,numalleles=2)
   rland <- landscape.new.locus(rland,type=1,ploidy=2,mutationrate=0.00,transmission=0,numalleles=2)
 
-  expmat <- cbind(c(0.5,0),c(0,1))
+  expmat <- cbind(c(0.5,0),c(0,0.5))
   hsq <- c(1,1)
   rland <- landscape.new.expression(rland,expmat=expmat,hsq=hsq)
-  rland <- landscape.new.gpmap(rland,c(-1,-1,-1,1,-1),c(-1,-1,0))
+rland <- landscape.new.gpmap(rland,
+                             matrix(c(-1,0,1,
+                                      -1,0,1,
+                                      -1,0,1,
+                                      -1,0,1,
+                                      -1,0,1),ncol=3,byrow=T),
+                             matrix(c(-1,0,1,
+                                      -1,0,1,
+                                       0,-0.5,0.001),ncol=3,byrow=T))
   initpopsize <- 500
 rland <- landscape.new.individuals(rland,c(initpopsize,initpopsize,rep(0,98)))
 

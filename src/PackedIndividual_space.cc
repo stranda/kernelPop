@@ -213,14 +213,14 @@ PackedIndividual_space  PackedIndividual_space::repro_sex(PackedIndividual_space
       assert(l>=0); 
       pi.G[((i * MAXPLOIDY) + 1)] = l;
 
-      //swap alleles so that diploid heterozygotes are sorted
-      if (PL[i]==2)
-	{ 
-	  if ((pi.G[((i * MAXPLOIDY) + 1)] >= 0) && (pi.G[((i * MAXPLOIDY) + 0)] > pi.G[((i * MAXPLOIDY) + 1)] ))
-	    {
-	      pi.swap_allele(i);
-	    }
-	}
+      //swap alleles so that diploid heterozygotes are sorted //if not then can tract haplotypes from parents
+      //     if (PL[i]==2)
+      //	{ 
+      //	  if ((pi.G[((i * MAXPLOIDY) + 1)] >= 0) && (pi.G[((i * MAXPLOIDY) + 0)] > pi.G[((i * MAXPLOIDY) + 1)] ))
+      //	    {
+      //	      pi.swap_allele(i);
+      //	    }
+      //	}
     }
   return pi;
 }

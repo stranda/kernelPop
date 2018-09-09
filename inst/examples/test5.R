@@ -5,20 +5,20 @@ source("helpers.R")
 
 rland <- NULL
   rland <- landscape.new.empty()
-  rland <- landscape.new.intparam(rland, h=50, s=2,np=0,totgen=20000)
+  rland <- landscape.new.intparam(rland, h=1, s=2,np=0,totgen=20000)
   rland <- landscape.new.switchparam(rland,mp=0)
-  rland <- landscape.new.floatparam(rland,s=0,seedscale=c(300,1000),
-                                    seedshape=c(1,500),seedmix=c(0.2),
-                                    pollenscale=c(50,200),pollenshape=c(1,1),
-                                    pollenmix=0.1 , asp=0.5)
+  rland <- landscape.new.floatparam(rland,s=0,seedscale=c(300,2000),
+                                    seedshape=c(1,2000),seedmix=c(0.1),
+                                    pollenscale=c(50,500),pollenshape=c(1,1),
+                                    pollenmix=c(0.1) , asp=0.5)
 
 
   S <- matrix(c(
-                  0.25, 0,
-                0.15, 0.02
+                  0.2, 0,
+                0.7, 0.1
                 ), byrow=T, nrow = 2)
   R <- matrix(c(
-                0, 200,
+                0,  5,
                 0,   0
                 ), byrow=T, nrow = 2)
   M <- matrix(c(
@@ -34,14 +34,12 @@ S <- matrix(0,ncol = (rland$intparam$habitats*rland$intparam$stages),
 R <- S
 M <- S
   
-rights <- floor(seq(500,100000,length=50))
-locs <- as.matrix(data.frame(lft=c(0,501,rights[c(-1:-2)]-diff(rights[-1])+1),
-                   bot=rep(0,50),
-                   rgt=rights,
+locs <- as.matrix(data.frame(lft=c(0),bot=c(0),
+                   rgt=100000,
                    top=10000))
   
   rland <- landscape.new.epoch(rland,S=S,R=R,M=M,
-                     carry=(0.50 * (sqrt((locs[,3]-locs[,1])*(locs[,4]-locs[,2])))),
+                     carry=(2 * (sqrt((locs[,3]-locs[,1])*(locs[,4]-locs[,2])))),
                      extinct=rep(0.05,rland$intparam$habitat),
                      leftx=locs[,1],
                      rightx=locs[,3],
@@ -52,6 +50,8 @@ locs <- as.matrix(data.frame(lft=c(0,501,rights[c(-1:-2)]-diff(rights[-1])+1),
 
 for (i in 1:16)
     rland <- landscape.new.locus(rland,type=1,ploidy=2,mutationrate=0.00,transmission=0,numalleles=2)
+
+
 
 
 expmat <- matrix(c(1,0,0,
@@ -80,9 +80,14 @@ expmat <- matrix(c(1,0,0,
                                        -1,0.5,-1    #reproduction
                                       ),ncol=3,byrow=T))
 initpopsize <- 5000
-rland <- landscape.new.individuals(rland,c(initpopsize,initpopsize,rep(0,98)))
+###rland <- landscape.new.individuals(rland,c(rep(0,48),initpopsize,initpopsize,rep(0,50)))
+rland <- landscape.new.individuals(rland,c(initpopsize,initpopsize))
 
 rland$individuals[,5] <- 4500+floor(rland$individuals[,5]/10)
+rland$individuals[,4] <- 500+floor(runif(length(rland$individuals[,4]),min=0,max=100))
+ind=rland$individuals
+
+
 ###############################
 
 
@@ -99,24 +104,24 @@ sumlst=list()[1:gen]
 
 for (i in 1:gen)
 {
-    print(dim(l$individuals))
- #   l=landscape.kill.locs(l,locs)
-    print(dim(l$individuals))
     if (dim(l$individuals)[1]>0) l.old=l
+ #   l=landscape.density.reg(l,nx=50,ny=5,indPunit=1e-4)
+    print(table(l$individuals[,1]))
     l=landscape.simulate(l,1)
-    landscape.plot.locations(l)
-    print(i)
-    print(dim(l$individuals))
-#    print(landscape.allelefreq(l) )
-    print(colMeans(landscape.phenotypes.c(l)))
-    sumlst[[i]] <- landscape.phenosummary(l)
-    sumlst[[i]]$gen=i
+    if (dim(l$individuals)[1]>1)
+        {
+            landscape.plot.locations(l)
+            print(i)
+            print(dim(l$individuals))
+                                        #    print(landscape.allelefreq(l) )
+            print(colMeans(landscape.phenotypes.c(l)))
+            sumlst[[i]] <- landscape.phenosummary(l)
+            sumlst[[i]]$gen=i
+        } else {
+            print("this is the dim at break")
+            print(dim(l$individuals))
+
+            break}
 }
 
 sumdf <- do.call(rbind,sumlst)
-
-p = sumdf %>%
-    ggplot(aes(y=gen,x=pop,z=phen1_mean))+
-    geom_tile(aes(fill = phen1_mean)) +
-    geom_contour() +
-    scale_fill_gradientn(colors = rev(cm.colors(100)))
