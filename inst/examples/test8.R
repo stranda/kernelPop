@@ -93,15 +93,15 @@ expmat <- matrix(c(
 hsq <- c(1,1,1,1)
 rland <- landscape.new.expression(rland,expmat=expmat*0.125,hsq=hsq)
 rland <- landscape.new.gpmap(rland,
-                             matrix(c(-1,0,1, #short scale
-                                       2,-0.5,1, #long scale
-                                      -1,0,1, #long shape
-                                       0,-0.5,1,     #mixture
-                                      -1,0,1),ncol=3,byrow=T),
-                             matrix(c(-1,0,1,
-                                      -1,0,1,
-                                      1,0.5,-0.5    #reproduction
-                                      ),ncol=3,byrow=T))
+                             matrix(c(-1,0,1,0, #short scale
+                                       2,-0.5,1,0, #long scale
+                                      -1,0,1,0, #long shape
+                                       0,-0.5,1,0,     #mixture
+                                      -1,0,1,0),ncol=4,byrow=T),
+                             matrix(c(-1,0,1,0,
+                                      -1,0,1,0,
+                                      1,0.5,-0.4,0    #reproduction
+                                      ),ncol=4,byrow=T))
 
 initpopsize <- 10000
 inits <- matrix(0,ncol=rland$intparam$habitats,nrow=2)
@@ -119,8 +119,8 @@ locs <- landscape.generate.locations(npop=1024,
                                      sizexkernel=c(400,65),sizeykernel=c(400,65)
                                      )
 
-phens=c(1,2,3,4) #represented as 0 in c++
-gen=200
+phens=c(1,2,3,4) #represented as 0:3 in c++
+gen=250
 sumlst=list()[1:ceiling(1+gen/5)]
 
 #pdf(paste0("gaps_",gapprop,".pdf"), width=15,height=7.5)

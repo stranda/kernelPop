@@ -15,10 +15,10 @@ rland <- NULL
 rland <- landscape.new.empty()
 rland <- landscape.new.intparam(rland, h=1024, s=2,np=0,totgen=20000,maxland=3e5)
 rland <- landscape.new.switchparam(rland,mp=0)
-rland <- landscape.new.floatparam(rland,s=0,seedscale=c(50,3000),
-                                  seedshape=c(1,500),seedmix=c(0.1),
-                                  pollenscale=c(50,200),pollenshape=c(1,1),
-                                  pollenmix=0.1 , asp=0.5)
+rland <- landscape.new.floatparam(rland,s=0,seedscale=c(40,290),
+                                  seedshape=c(1,300),seedmix=c(0.12),
+                                  pollenscale=c(40,100),pollenshape=c(1,10),
+                                  pollenmix=0.2 , asp=0.5)
 
 
 S <- matrix(c(
@@ -71,36 +71,40 @@ rland <- landscape.new.epoch(rland,S=S,R=R,M=M,
 for (i in 1:16)
     rland <- landscape.new.locus(rland,type=1,ploidy=2,mutationrate=0.00,transmission=0,numalleles=2)
 
-
-expmat <- matrix(c(1,0,0,
-                   1,0,0,
-                   0,0,0,
-                   0,0,0,
-                   0,1,0,
-                   0,1,0,
-                   0,0,0,
-                   0,0,0,
-                   0,0,1,
-                   0,0,1,
-                   0,0,0,
-                   0,0,0
-                   ),byrow=T,ncol=3)
-hsq <- c(1,1,1)
-rland <- landscape.new.expression(rland,expmat=expmat*0.25,hsq=hsq)
+expmat <- matrix(c(
+    1,0,0,0,
+    1,0,0,0,
+    1,0,0,0,
+    1,0,0,0,
+    0,1,0,0,
+    0,1,0,0,
+    0,1,0,0,
+    0,1,0,0,
+    0,0,1,0,
+    0,0,1,0,
+    0,0,1,0,
+    0,0,1,0,
+    0,0,0,1,
+    0,0,0,1,
+    0,0,0,1,
+    0,0,0,1
+                   ),byrow=T,ncol=4)
+hsq <- c(1,1,1,1)
+rland <- landscape.new.expression(rland,expmat=expmat*0.125,hsq=hsq)
 rland <- landscape.new.gpmap(rland,
                              matrix(c(-1,0,1, #short scale
-                                      2,-0.5,1, #long scale
+                                       2,-0.5,1, #long scale
                                       -1,0,1, #long shape
-                                      1,-0.5,1,     #mixture
+                                       1,-0.5,1,     #mixture
                                       -1,0,1),ncol=3,byrow=T),
                              matrix(c(-1,0,1,
                                       -1,0,1,
-                                      0,-0.5,1    #reproduction
+                                       0,0.5,-0.4    #reproduction
                                       ),ncol=3,byrow=T))
-initpopsize <- 10000
 
-pop1=490
-pop2=530
+
+pop1=460
+pop2=540
 
 inits <- matrix(0,ncol=rland$intparam$habitats,nrow=2)
 inits[1:2,c(pop1,pop2)] <- initpopsize  
@@ -124,7 +128,7 @@ locs <- landscape.generate.locations(npop=1024,
                                      sizexkernel=c(400,65),sizeykernel=c(400,65)
                                      )
 
-phens=c(1,2,3) #represented as 0 in c++
+phens=c(1,2,3,4) #represented as 0 in c++
 gen=200
 sumlst=list()[1:gen]
 
@@ -139,7 +143,7 @@ for (i in 1:gen)
     l=landscape.simulate(l,1)
     if ((i %% 1)==0)
     {
-        par(mfrow=c(1,length(phens)))
+        par(mfrow=c(2,2))
         for (phen in phens)
             landscape.plot.phenotypes(l,phen)
         par(mfrow=c(1,1))

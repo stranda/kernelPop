@@ -68,7 +68,7 @@ rland <- landscape.new.epoch(rland,S=S,R=R,M=M,
                              maxland=c(min(locs[1]),min(locs[2]),max(locs[3]),max(locs[4])))
 
 
-for (i in 1:16)
+for (i in 1:12)
     rland <- landscape.new.locus(rland,type=1,ploidy=2,mutationrate=0.00,transmission=0,numalleles=2)
 
 

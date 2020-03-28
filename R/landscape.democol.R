@@ -3,6 +3,6 @@
 # the individuals matrix
 #
 landscape.democol <- function()
-  {
-    as.integer(.Call("num_demo_cols",PACKAGE="kernelPop2"))
+{
+    as.integer(9)
   }

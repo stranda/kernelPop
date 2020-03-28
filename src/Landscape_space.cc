@@ -189,9 +189,9 @@ void Landscape_space::setgpmap()
 {
   int i;
   gpdisp.resize(5);
-  for (i=0;i<5;i++) {gpdisp[i].resize(3);}
+  for (i=0;i<5;i++) {gpdisp[i].resize(4);}
   gpdemo.resize(3);
-  for (i=0;i<3;i++) {gpdemo[i].resize(3);}
+  for (i=0;i<3;i++) {gpdemo[i].resize(4);}
 }
 
 void Landscape_space::setndemo(int nd)
@@ -1463,7 +1463,8 @@ void Landscape_space::Reproduce()
 	  //randomly choose a distance from the correct distribution
 	  std::random_shuffle(valid_males.begin(),valid_males.end()); 
 	  
-
+	  // cerr <<"valid_males.size() "<<valid_males.size()<<endl;
+	  
 	  I[k].CompressClass(0.5);///save space (may help speed )
 	  I[k].ResetIndividuals();///set an internal pointer to I[k] first ind in list
 	  
@@ -1581,7 +1582,7 @@ ability to produce pollen could be inserted.
 			  double rph = IndividualPhenotype(searchI)[gpd]; //the phenotype for the repro trait
 			  //			  cerr << "rph: "<<rph<< ",  gpdemo[2][1]: " << gpdemo[2][1] << ", gpdemo[2][2]: " << gpdemo[2][2]<<endl;
 			  //			  cerr << "noff before: "<<noff<<endl;
-			  noff = floor(noff*(1+(getgpdemo(2,1)+getgpdemo(2,2)*rph)));
+			  noff = floor(noff*(1+(getgpdemo(2,1)+getgpdemo(2,2)*rph+getgpdemo(2,3)*pow(rph,2))));
 			  //			  cerr << "noff after: "<<noff<<endl;
 			}
 		      for (q=0;q<noff;q++)
@@ -1599,30 +1600,30 @@ ability to produce pollen could be inserted.
 			    {
 			      if (!(ROUND_2_INT(getgpdisp(0,0))<0))
 				{
-				  dmult1=1+IndividualPhenotype(searchI)[ROUND_2_INT(getgpdisp(0,0))] * getgpdisp(0,2) + getgpdisp(0,1);
-				  //				  cerr << "rounded getgpdisp(0,0): "<<ROUND_2_INT(getgpdisp(0,0))<<", getgpdisp(0,1): "<<getgpdisp(0,1)<<", getgpdisp(0,2): "<<getgpdisp(0,2)<<", dmult1: "<<dmult1<<endl;
+				  dmult1=1+pow(IndividualPhenotype(searchI)[ROUND_2_INT(getgpdisp(0,0))],2) * getgpdisp(0,3) +
+				    IndividualPhenotype(searchI)[ROUND_2_INT(getgpdisp(0,0))] * getgpdisp(0,2) + getgpdisp(0,1);
 				}
 			      else dmult1=1; //shortscale
 			      
 			      if (!(ROUND_2_INT(getgpdisp(1,0))<0))
 				{
-				  dmult2=1+IndividualPhenotype(searchI)[ROUND_2_INT(getgpdisp(1,0))] * getgpdisp(1,2) + getgpdisp(1,1);
-				  //				  cerr << "rounded getgpdisp(1,0): "<<ROUND_2_INT(getgpdisp(1,0))<<", getgpdisp(1,1): "<<getgpdisp(1,1)<<", getgpdisp(1,2): "<<getgpdisp(1,2)<<", dmult2: "<<dmult2<<endl;
+				  dmult2=1+pow(IndividualPhenotype(searchI)[ROUND_2_INT(getgpdisp(1,0))],2) * getgpdisp(1,3) +
+				    IndividualPhenotype(searchI)[ROUND_2_INT(getgpdisp(1,0))] * getgpdisp(1,2) + getgpdisp(1,1);
 				}
 			      else dmult2=1; //longscale
 			      
 			      
 			      if (!(ROUND_2_INT(getgpdisp(2,0))<0))
 				{
-				  dmult3=1+IndividualPhenotype(searchI)[ROUND_2_INT(getgpdisp(2,0))] * getgpdisp(2,2) + getgpdisp(2,1);
-				  //				  cerr << "rounded getgpdisp(2,0): "<<ROUND_2_INT(getgpdisp(2,0))<<", getgpdisp(2,1): "<<getgpdisp(2,1)<<", getgpdisp(2,2): "<<getgpdisp(2,2)<<", dmult3: "<<dmult3<<endl;
+				  dmult3=1+pow(IndividualPhenotype(searchI)[ROUND_2_INT(getgpdisp(2,0))],2) * getgpdisp(2,3) +
+				    IndividualPhenotype(searchI)[ROUND_2_INT(getgpdisp(2,0))] * getgpdisp(2,2) + getgpdisp(2,1);
 				}
 			      else dmult3=1; //longshape
 			      
 			      if (!(ROUND_2_INT(getgpdisp(3,0))<0))
 				{
-				  dmult4=1+IndividualPhenotype(searchI)[ROUND_2_INT(getgpdisp(3,0))] * getgpdisp(3,2) + getgpdisp(3,1);
-				  //				  cerr << "rounded getgpdisp(3,0): "<<ROUND_2_INT(getgpdisp(3,0))<<", getgpdisp(3,1): "<<getgpdisp(3,1)<<", getgpdisp(4,2): "<<getgpdisp(3,2)<<", dmult4: "<<dmult4<<endl;
+				  dmult4=1+pow(IndividualPhenotype(searchI)[ROUND_2_INT(getgpdisp(3,0))],2) * getgpdisp(3,3) +
+				    IndividualPhenotype(searchI)[ROUND_2_INT(getgpdisp(3,0))] * getgpdisp(3,2) + getgpdisp(3,1);
 				}
 			      else dmult4=1; //mix
 

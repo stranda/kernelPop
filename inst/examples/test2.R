@@ -52,7 +52,8 @@ locs <- as.matrix(data.frame(lft=c(0,501,rights[c(-1:-2)]-diff(rights[-1])+1),
   rland <- landscape.new.locus(rland,type=1,ploidy=2,mutationrate=0.00,transmission=0,numalleles=2)
   rland <- landscape.new.locus(rland,type=1,ploidy=2,mutationrate=0.00,transmission=0,numalleles=2)
 
-  expmat <- cbind(c(0.5,0),c(0,0.5))
+expmat <- cbind(c(0.5,0),
+                c(0,0.5))
   hsq <- c(1,1)
   rland <- landscape.new.expression(rland,expmat=expmat,hsq=hsq)
 rland <- landscape.new.gpmap(rland,
@@ -71,7 +72,7 @@ rland <- landscape.new.individuals(rland,c(initpopsize,initpopsize,rep(0,98)))
 
 l=rland
 landscape.plot.locations(l)
-for (i in 1:200)
+for (i in 1:2)
 {
     if (dim(l$individuals)[1]>0) l.old=l
     l=landscape.simulate(l,1)

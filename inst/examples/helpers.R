@@ -120,3 +120,13 @@ landscape.geodist <- function(rland,cmp=c("offspring","mother","father")[1:2])
             } else { stop("need two individuals to calc distance with")}
     
 }
+
+#map between loci and phenotypes for plotting, etc
+landscape.phenoloc <- function(l)
+{
+    m=l$expression$expmat!=0
+    colnames(m) <- paste0("ph",1:dim(m)[2])
+    rownames(m) <- paste0("l",1:dim(m)[1])
+    m
+}
+

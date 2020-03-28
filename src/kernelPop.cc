@@ -118,13 +118,13 @@ extern "C" {
     L.setgpmap();
 
     for (i=0;i<5;i++)
-      for (j=0;j<3;j++)
+      for (j=0;j<4;j++)
 	{
 	  L.setgpdisp(i,j,REAL(coerceVector(getListElement(inlist,GPDISPNAME), REALSXP))[i+j*5]);
 	  //	  Rprintf("L.getgpdisp, i=%i, j=%i, val=%g\n",i,j,L.getgpdisp(i,j));
 	}
     for (i=0;i<3;i++)
-      for (j=0;j<3;j++)
+      for (j=0;j<4;j++)
 	{
 	  L.setgpdemo(i,j,REAL(coerceVector(getListElement(inlist,GPDEMONAME), REALSXP))[i+j*3]);
 	  //	  Rprintf("L.getgpdemo, i=%i, j=%i, val=%g\n",i,j,L.getgpdemo(i,j));
@@ -611,15 +611,15 @@ read in landscapes
     SET_STRING_ELT(Elistn, 0, mkChar(GPDISPNAME)); 
     SET_STRING_ELT(Elistn, 1, mkChar(GPDEMONAME));
 
-    SEXP gpdisp = PROTECT(allocMatrix(REALSXP, 5, 3));
-    SEXP gpdemo = PROTECT(allocMatrix(REALSXP, 3, 3));
+    SEXP gpdisp = PROTECT(allocMatrix(REALSXP, 5, 4));
+    SEXP gpdemo = PROTECT(allocMatrix(REALSXP, 3, 4));
     
 
     for (i=0;i<5;i++)
-      for (j=0;j<3;j++)
+      for (j=0;j<4;j++)
 	REAL(gpdisp)[i+j*5] = L.getgpdisp(i,j);
     for (i=0;i<3;i++)
-      for (j=0;j<3;j++)
+      for (j=0;j<4;j++)
 	REAL(gpdemo)[i+j*3] = L.getgpdemo(i,j);
     
     setAttrib(Elist, R_NamesSymbol, Elistn);

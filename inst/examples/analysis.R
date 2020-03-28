@@ -97,19 +97,29 @@ landscape.LD <- function(l)
                 if (((afreqs[i,1]>0)&(afreqs[i,1]<1))&((afreqs[j,1]>0)&(afreqs[j,1]<1))) #polymorphism
                 {
                     df <- data.frame(pop=pops,
-                                     av=locs[[i]][,1],
-                                     ev=locs[[i]][,1]==locs[[j]][,1],
-                                     gv=locs[[i]][,1]>locs[[j]][,1]
+                                     ava=locs[[i]][,1],
+                                     eva=locs[[i]][,1]==locs[[j]][,1],
+                                     gva=locs[[i]][,1]>locs[[j]][,1],
+                                     avb=locs[[i]][,2],
+                                     evb=locs[[i]][,2]==locs[[j]][,2],
+                                     gvb=locs[[i]][,2]>locs[[j]][,2]
                                      )
-                    mns <- df%>%mutate(p11=(av==1)&(ev&(!gv)),
-                                       p22=(av==2)&(ev&(!gv)),
-                                       p12=((!ev)&(!gv)),
-                                       p21=((!ev)&(gv))) %>%
-                        group_by(pop)%>%summarise(p11=mean(p11),p12=mean(p12),p21=mean(p21),p22=mean(p22))
-                    
+                    mns <- df%>%mutate(p11a=(ava==1)&(eva&(!gva)),
+                                       p22a=(ava==2)&(eva&(!gva)),
+                                       p12a=((!eva)&(!gva)),
+                                       p21a=((!eva)&(gva)),
+                                       p11b=(avb==1)&(evb&(!gvb)),
+                                       p22b=(avb==2)&(evb&(!gvb)),
+                                       p12b=((!evb)&(!gvb)),
+                                       p21b=((!evb)&(gvb))) %>%
+                        group_by(pop)%>%
+                        summarise(p11a=mean(p11a),p12a=mean(p12a),p21a=mean(p21a),p22a=mean(p22a),
+                                  p11b=mean(p11b),p12b=mean(p12b),p21b=mean(p21b),p22b=mean(p22b),
+                                  n=n())
+                    mns = mutate(mns,Dv=( (p11a*p22a)-(p12a*p21a)+(p11b*p22b)-(p12b*p21b) )/2)
                     rdf <- rbind(rdf,mutate(mns,
-                                            D=(p11*p22)-(p12*p21),
-                                            rsq= (((p11*p22)-(p12*p21))/sqrt(afreqs[i,1]*afreqs[j,1]*afreqs[i,2]*afreqs[j,2]))^2,
+                                            D=Dv,
+                                            rsq=(Dv/sqrt(afreqs[i,1]*afreqs[j,1]*afreqs[i,2]*afreqs[j,2]))^2,
                                             loc1=i,
                                             loc2=j)
                                  )
@@ -122,63 +132,6 @@ landscape.LD <- function(l)
 
 
 
-landscape.LD.old <- function(l)
-{
-
-    afreqs <- matrix(NA,nrow=sum(landscape.ploidy(l)==2),ncol=2)
-    ret <- NULL
-    for (i in which(landscape.ploidy(l)==2))
-    {
-        loc1 = landscape.locus(i,l)[,-1:-9]
-        if (length(unique(c(landscape.locus(i,l)[,-1:-9])))>1)
-        {
-            if (is.na(afreqs[i,1]))
-            {
-                tbl= table(loc1[,1])
-                afreqs[i,] <- tbl/sum(tbl)
-            }
-            
-            for (j in which(landscape.ploidy(l)==2))
-                if (j<i)
-                {
-                    loc2 = landscape.locus(j,l)[,-1:-9]
-                    if (length(unique(c(loc2)))>1)
-                    {
-                 
-                        if (is.na(afreqs[j,1]))
-                        {
-                            tbl= table(loc2[,1])
-                            afreqs[j,] <- tbl/sum(tbl)
-                        }
-
-#                        genos=unique(cbind(loc1[,1],loc2[,1]))
-                        tbl=table(paste(loc1[,1],loc2[,1],sep="/"))
-
-                         if (sum(names(tbl)=="1/1")>0) p11=tbl[names(tbl)=="1/1"]/sum(tbl) else p11 = 0
-                        if (sum(names(tbl)=="1/2")>0) p12=tbl[names(tbl)=="1/2"]/sum(tbl) else p12=0
-                        if (sum(names(tbl)=="2/1")>0) p21=tbl[names(tbl)=="2/1"]/sum(tbl) else p21=0
-                         if (sum(names(tbl)=="2/2")>0) p22=tbl[names(tbl)=="2/2"]/sum(tbl) else p22=0
-                        print(c(p11,p12,p21,p22))
-                        atbl1 = table(loc1[,1])
-                        atbl2 = table(loc2[,1])
-                        p1=afreqs[i,1]
-                        p2=afreqs[i,2]
-                        q1=afreqs[j,1]
-                        q2=afreqs[j,2]
-                        D=p11*p22 - p12*p21
-                        rsq = (D/sqrt(p1*p2*q1*q2))^2
-                        print(c(i,j,D,rsq))
-                        ret <- rbind(ret,cbind(loc1=i,loc2=j,D=D,rsq=rsq))
-                    }
-                }
-            }
-    }
-    ret
-    
-          
-}
-
-
 ###
 ###
 ###
@@ -188,7 +141,8 @@ landscape.dist2origin <- function(l,origin=NULL)
     crd=data.frame(landscape.popcoords(l))
     rownames(crd) <- crd$pop
     d <- as.matrix(dist(crd[,c("x","y")],diag=T,upper=T))
-    d[rownames(d)==as.character(origin),]
+    df=as.data.frame(cbind(pop=unique(landscape.populations(l)),
+                  d=d[rownames(d)==as.character(origin),]))
 }
 
 landscape.neighborhood <- function(rland)

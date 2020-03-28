@@ -111,6 +111,34 @@
             ok <- FALSE
         }
     }
+
+
+    if (is.null(Rland$expression)) {
+        if (verb) {
+            message("gpmap not found.")
+        }
+        ok <- FALSE
+    }
+    
+    if (is.null(Rland$gpmap)) {
+        if (verb) {
+            message("gpmap not found.")
+        } 
+        ok <- FALSE
+    } else
+    {
+        if (dim(Rland$gpmap$gpdisp)[2]!=4) {
+            if (verb) message("gpdisp needs 4 cols")
+            ok <- FALSE
+            }
+        if (dim(Rland$gpmap$gpdemo)[2]!=4) {
+            if (verb) message("gpdemo needs 4 cols")
+            ok <- FALSE
+            }
+    }
+
+
+
     if (is.null(Rland$individuals)) {
         if (verb) {
             message("no individuals section found.")

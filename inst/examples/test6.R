@@ -7,7 +7,7 @@ source("helpers.R")
 ###
 
 
-gapprop = 0
+gapprop = 0.5
 
 
 
@@ -15,8 +15,8 @@ rland <- NULL
 rland <- landscape.new.empty()
 rland <- landscape.new.intparam(rland, h=250, s=2,np=0,totgen=20000)
 rland <- landscape.new.switchparam(rland,mp=0)
-rland <- landscape.new.floatparam(rland,s=0,seedscale=c(300,2000),
-                                  seedshape=c(1,200),seedmix=c(0.1),
+rland <- landscape.new.floatparam(rland,s=0,seedscale=c(200,1500),
+                                  seedshape=c(1,200),seedmix=c(0.05),
                                   pollenscale=c(50,200),pollenshape=c(1,1),
                                   pollenmix=0.1 , asp=0.5)
 
@@ -26,7 +26,7 @@ S <- matrix(c(
     0.8, 0.01
 ), byrow=T, nrow = 2)
   R <- matrix(c(
-      0, 10,
+      0, 7,
       0,   0
   ), byrow=T, nrow = 2)
 M <- matrix(c(
@@ -69,7 +69,7 @@ rland <- landscape.new.epoch(rland,S=S,R=R,M=M,
                              maxland=c(min(locs[1]),min(locs[2]),max(locs[3]),max(locs[4])))
 
 
-for (i in 1:16)
+for (i in 1:12)
     rland <- landscape.new.locus(rland,type=1,ploidy=2,mutationrate=0.00,transmission=0,numalleles=2)
 
 
@@ -120,7 +120,7 @@ phens=c(1,2,3) #represented as 0 in c++
 gen=200
 sumlst=list()[1:gen]
 
-#pdf(paste0("gaps_",gapprop,".pdf"), width=15,height=7.5)
+pdf(paste0("gaps_",gapprop,".pdf"), width=15,height=7.5)
 
 for (i in 1:gen)
 {
@@ -138,7 +138,7 @@ for (i in 1:gen)
     }
     print(i)
     print(dim(l$individuals))
-#    print(landscape.allelefreq(l) )
+    print(landscape.allelefreq(l) )
     print(colMeans(landscape.phenotypes.c(l)))
     sumlst[[i]] <- data.frame(landscape.phenosummary(l))
     sumlst[[i]]$gen=i
@@ -147,7 +147,7 @@ for (i in 1:gen)
 
 sumdf <- do.call(rbind,sumlst)
 
-save(file=paste0("gap_",gapprop,"_res.rda"),sumlst,sumdf)
+save(file=paste0("newgap_",gapprop,"_res.rda"),sumlst,sumdf)
 
 
 p = sumdf %>%
